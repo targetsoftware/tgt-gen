@@ -1,6 +1,6 @@
 {
-  "name": "tgt-gen",
-  "version": "1.0.0",
+  "name": "@targetsoftware/tgt-gen",
+  "version": "1.0.1",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"

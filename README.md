@@ -7,7 +7,7 @@ Code generator, independent, without language or technology coupling, based on t
 Use the package manager [npm + node.js](https://nodejs.org/en/download/) to install and run `tgt-gen`.
 
 ```bash
-npm install tgt-gen --global
+npm install @targetsoftware/tgt-gen --global
 ```
 
 ## Usage
