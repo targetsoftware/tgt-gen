@@ -1,32 +1,3 @@
-# Target Software - Generator
-
-Code generator, independent, without language or technology coupling, based on templates and files, directed to your database tables.
-
-## Installation
-
-Use the package manager [npm + node.js](https://nodejs.org/en/download/) to install and run `tgt-gen`.
-
-```bash
-npm install tgt-gen --global
-```
-
-## Usage
-
-Inside the root folder of your project, create a folder `generator` and inside it create the `config.json` file and the `templates` folder to start, and run command
-```bash
-tgt-gen start
-```
-
-## Templates
-In the project they are creating templates for Vue.js 2 and Asp.Net in CQRS
-
-## DB Connection
-Connection is available for SQL Server and Postgree
-
-## Example `config.json` 
-
-
-```json
 {
 	"db_type": "mssql", //mssql or postgree
 	"db_config": {
@@ -121,12 +92,3 @@ Connection is available for SQL Server and Postgree
 		}
 	]
 }
-```
-
-## Contributing
-Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
-
-Please make sure to update tests as appropriate.
-
-## License
-[MIT](https://choosealicense.com/licenses/mit/)

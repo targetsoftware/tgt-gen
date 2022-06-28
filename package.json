@@ -1,0 +1,33 @@
+{
+  "name": "tgt-gen",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "bin": {
+    "tgt-gen": "index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/brunoseco/base-generator.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/brunoseco/base-generator/issues"
+  },
+  "homepage": "https://github.com/brunoseco/base-generator#readme",
+  "dependencies": {
+    "commander": "^9.3.0",
+    "fs-extra": "^10.1.0",
+    "mssql": "^8.1.0",
+    "node-pretty-log": "^1.1.0",
+    "pg": "^8.7.3"
+  },
+  "devDependencies": {
+    "eslint": "^8.14.0"
+  },
+  "description": ""
+}
