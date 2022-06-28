@@ -1,6 +1,6 @@
 {
   "name": "@targetsoftware/tgt-gen",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -10,15 +10,15 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/brunoseco/base-generator.git"
+    "url": "git+https://github.com/targetsoftware/tgt-gen"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/brunoseco/base-generator/issues"
+    "url": "https://github.com/targetsoftware/tgt-gen/issues"
   },
-  "homepage": "https://github.com/brunoseco/base-generator#readme",
+  "homepage": "https://github.com/targetsoftware/tgt-gen#readme",
   "dependencies": {
     "commander": "^9.3.0",
     "fs-extra": "^10.1.0",
