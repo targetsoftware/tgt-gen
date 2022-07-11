@@ -5,17 +5,14 @@ const path = require('path');
 const database_mssql = require('./database/mssql')
 const database_postgree = require('./database/postgree')
 
-
 const replace = require('./functions/replace')
 const workUnique = require('./functions/work-unique')
-
-log('info', 'Starting...');
 
 module.exports = async function start(id, config) {
 
     const context = config.contexts.find(_ => _.id == id);
 
-    log('info', `Runing context ${context.id} - ${context.name_space}`);
+    log('info', `Runing context ${context.id} - ${context.name_space}.${context.module}`);
 
     try {
 
@@ -26,6 +23,9 @@ module.exports = async function start(id, config) {
         let result_columns = await database.getTableColumns(tables_name, config);
         let result_keys = await database.getKeys(tables_name, config);
         let result_related_tables = await database.getRelatedTables(tables_name, config);
+
+        if (!context.works_include || context.works_include.length == 0)
+            context.works_include = context.works.map(_ => _.name);
 
         // MAP COLUMNS TO CONTEXT TABLES OBJECT
         log('info', `Setting table properties`);
@@ -70,6 +70,12 @@ module.exports = async function start(id, config) {
 
                 });
 
+                if (!table.works_include || table.works_include.length == 0)
+                    table.works_include = context.works_include;
+
+                if (table.works_exclude && table.works_exclude.length > 0)
+                    table.works_include = table.works_include.filter(work => !table.works_exclude.includes(work));
+
                 log('Success', `Table ${table.name} configured.`);
 
             } catch (error) {
@@ -89,11 +95,17 @@ module.exports = async function start(id, config) {
             if (work.per_table) {
                 log('info', `Working with ${work.template_file} - One file per table...`);
                 for (const table of context.tables) {
+
+                    if (!table.works_include.includes(work.name)) {
+                        log('info', `${table.name} - Skipped because it wasn't included`)
+                        continue;
+                    }
+
                     let full_path_formated = replace.contextAndTableProps(full_path, context, table);
                     let file_name_formated = replace.contextAndTableProps(work.file_name, context, table);
 
                     await fse.ensureDir(full_path_formated);
-                    let template_formated = await workUnique.execute(template, context, table);
+                    let template_formated = await workUnique.execute(work, template, context, table);
                     await fse.writeFile(path.join(full_path_formated, file_name_formated), template_formated);
 
                     log('success', `${table.name} - File generated ${full_path_formated}`)
@@ -103,7 +115,7 @@ module.exports = async function start(id, config) {
                 log('info', `Working with ${work.template_file} - Unique file...`);
 
                 await fse.ensureDir(full_path);
-                let template_formated = await workUnique.execute(template, context);
+                let template_formated = await workUnique.execute(work, template, context);
                 let full_path_formated = path.join(full_path, work.file_name);
                 await fse.writeFile(full_path_formated, template_formated);
                 log('success', `File generated ${full_path_formated}`)

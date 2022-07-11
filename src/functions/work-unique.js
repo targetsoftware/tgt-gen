@@ -4,7 +4,7 @@ const replace = require('./replace')
 const workColumn = require('./work-column')
 
 module.exports = {
-    async execute(template, context, table) {
+    async execute(work, template, context, table) {
 
         try {
 
@@ -63,6 +63,9 @@ module.exports = {
                     }
 
                     for (const _table of context.tables) {
+
+                        if (!_table.works_include.includes(work.name))
+                            continue;
 
                         let template_table_formated = template_table;
                         template_table_formated = replace.tableProps(template_table_formated, _table);
