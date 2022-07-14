@@ -63,6 +63,9 @@ module.exports = {
         return rows;
 
     },
+    async closeConnection() {
+        throw "[closeConnection] Not implemented";
+    },
     async getRelatedTables(tables) {
         throw "[getRelatedTables] Not implemented";
     }

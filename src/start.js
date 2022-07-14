@@ -16,6 +16,19 @@ module.exports = async function start(id, config) {
 
     try {
 
+        if (!context.tables || context.tables.length == 0)
+            throw `tables undefined`;
+
+        const uniq = context.tables
+            .map(table => { return { count: 1, name: table.name } })
+            .reduce((result, b) => {
+                result[b.name] = (result[b.name] || 0) + b.count;
+                return result;
+            }, {});
+        const duplicates = Object.keys(uniq).filter((a) => uniq[a] > 1);
+        if (duplicates && duplicates.length > 0)
+            throw `Has duplicate table names ${duplicates}`;
+
         const tables_name = context.tables.map(_ => _.name)
 
         const database = config.db_type == "mssql" ? database_mssql : database_postgree;
@@ -23,6 +36,7 @@ module.exports = async function start(id, config) {
         let result_columns = await database.getTableColumns(tables_name, config);
         let result_keys = await database.getKeys(tables_name, config);
         let result_related_tables = await database.getRelatedTables(tables_name, config);
+        await database.closeConnection();
 
         if (!context.works_include || context.works_include.length == 0)
             context.works_include = context.works.map(_ => _.name);
@@ -76,10 +90,13 @@ module.exports = async function start(id, config) {
                 if (table.works_exclude && table.works_exclude.length > 0)
                     table.works_include = table.works_include.filter(work => !table.works_exclude.includes(work));
 
+                if (!table.primary_key_name)
+                    throw `Table ${table.name} do not have primary_key`;
+
                 log('Success', `Table ${table.name} configured.`);
 
             } catch (error) {
-                log('error', `Setting table properties ${error}`);
+                log('error', `Setting table properties: ${error}`);
                 throw error;
             }
 

@@ -1,20 +1,13 @@
 const log = require('node-pretty-log');
 const sql = require('mssql')
 
-// {
-//     table_schema,
-//     table_name,
-//     column_name,
-//     is_nullable,
-//     data_type,
-//     data_type_full,
-//     maximum_length,
-//     numeric_precision,
-// }
+let client;
 
 module.exports = {
     async getClient(config) {
-        return await sql.connect(config.db_config);
+        if (!client || !client.connected)
+            client = await sql.connect(config.db_config);
+        return client;
     },
     async getTableColumns(tables, config) {
 
@@ -47,8 +40,6 @@ module.exports = {
         const { recordset } = await client.request()
             .query(_query);
 
-        await client.close()
-
         return recordset;
     },
     async getKeys(tables, config) {
@@ -75,8 +66,6 @@ module.exports = {
 
         const { recordset } = await client.request()
             .query(_query);
-
-        await client.close()
 
         return recordset;
     },
@@ -114,9 +103,10 @@ module.exports = {
         const { recordset } = await client.request()
             .query(_query);
 
-        await client.close()
-
         return recordset;
+    },
+    async closeConnection() {
+        await client.close()
     },
     formatTableArrayString(tables) {
         let _tables = "";
