@@ -56,6 +56,8 @@ module.exports = async function start(id, config) {
                 const related_tables = result_related_tables.filter(_ => _.table_name == table.name);
                 table.related_tables = related_tables;
 
+                table.primary_key_columns = [];
+
                 table.columns.forEach(column => {
 
                     column.column_name_original = column.column_name;
@@ -80,8 +82,9 @@ module.exports = async function start(id, config) {
 
                         table.primary_key_name = column.column_name;
                         table.primary_key_data_type = column.data_type;
-                    }
 
+                        table.primary_key_columns.push(column);
+                    }
                 });
 
                 if (!table.works_include || table.works_include.length == 0)
@@ -120,20 +123,37 @@ module.exports = async function start(id, config) {
 
                     let full_path_formated = replace.contextAndTableProps(full_path, context, table);
                     let file_name_formated = replace.contextAndTableProps(work.file_name, context, table);
+                    let full_path_file = path.join(full_path_formated, file_name_formated);
+
+                    if (!work.replace_if_exists) {
+                        const pathExists = await fse.pathExists(full_path_file);
+                        if (pathExists) {
+                            log('info', `${table.name} - Skipped because already exists`);
+                            continue;
+                        }
+                    }
 
                     await fse.ensureDir(full_path_formated);
                     let template_formated = await workUnique.execute(work, template, context, table);
-                    await fse.writeFile(path.join(full_path_formated, file_name_formated), template_formated);
+                    await fse.writeFile(full_path_file, template_formated);
 
                     log('success', `${table.name} - File generated ${full_path_formated}`)
                 }
             }
             else {
                 log('info', `Working with ${work.template_file} - Unique file...`);
+                let full_path_formated = path.join(full_path, work.file_name);
+
+                if (!work.replace_if_exists) {
+                    const pathExists = await fse.pathExists(full_path_formated);
+                    if (pathExists) {
+                        log('info', `${work.template_file} - Skipped because already exists`);
+                        return;
+                    }
+                }
 
                 await fse.ensureDir(full_path);
                 let template_formated = await workUnique.execute(work, template, context);
-                let full_path_formated = path.join(full_path, work.file_name);
                 await fse.writeFile(full_path_formated, template_formated);
                 log('success', `File generated ${full_path_formated}`)
             }

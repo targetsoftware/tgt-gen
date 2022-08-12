@@ -2,11 +2,11 @@
 const replace = require('./replace')
 
 module.exports = {
-    async execute(table, template_table) {
+    async execute(table, columns, template_table) {
 
         let line = "";
 
-        for (const column of table.columns) {
+        for (const column of columns) {
 
             let template_table_column = replace.columnProps(template_table, column);
 

@@ -40,7 +40,7 @@ module.exports = {
                         template_table += line_table_column_foreach + (line_table_column_foreach.endsWith("\n") ? "" : "\n");
                     }
 
-                    let line_table_column = await workColumn.execute(table, template_table);
+                    let line_table_column = await workColumn.execute(table, table.columns, template_table);
                     if (line_table_column)
                         line += line_table_column;
                 }
@@ -93,7 +93,7 @@ module.exports = {
                                     template_table_column += line_table_column_foreach + (line_table_column_foreach.endsWith("\n") ? "" : "\n");
                                 }
 
-                                let line_table_column = await workColumn.execute(_table, template_table_column);
+                                let line_table_column = await workColumn.execute(_table, _table.columns, template_table_column);
                                 if (line_table_column)
                                     line_table += line_table_column;
                             }
@@ -105,6 +105,27 @@ module.exports = {
 
                         line += template_table_new + (template_table_new.endsWith("\n") ? "" : "\n");
                     }
+                }
+                else if (line.indexOf("#start foreach_table_primary_key#") >= 0) {
+
+                    index_line++;
+                    line = "";
+
+                    let template_table = "";
+                    while (index_line < template_lines.length) {
+
+                        let line_table_column_foreach = template_lines[index_line];
+                        index_line++;
+
+                        if (line_table_column_foreach.indexOf("#end foreach_table_primary_key#") >= 0)
+                            break;
+
+                        template_table += line_table_column_foreach + (line_table_column_foreach.endsWith("\n") ? "" : "\n");
+                    }
+
+                    let line_table_column = await workColumn.execute(table, table.primary_key_columns, template_table);
+                    if (line_table_column)
+                        line += line_table_column;
                 }
                 else
                     index_line++;
